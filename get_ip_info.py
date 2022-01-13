@@ -2,9 +2,10 @@
 import requests
 import http.client
 # see http://geolocation-db.com/
+# see https://geolocation-db.com/documentation
 
 
-def get_ip_info(ip: str = "", position: bool = True) -> dict:
+def get_ip_geoinfo(ip: str = "", position: bool = True) -> dict:
     """
     Возвращает информацию по IP адресу (ip). Если ip=="", то возвращает IP этого ПК.
     param ip: IP-адрес
@@ -19,13 +20,26 @@ def get_ip_info(ip: str = "", position: bool = True) -> dict:
         return req.json()
 
 
-def get_my_white_ip() -> str:
+def get_my_white_ip(all_info: bool = False) -> str:
+    """Возвращает белый внешний IP-адрес ПК, выполняющего эту функцию."""
+    s = "/all" if all_info else "/ip"
+    conn = None
+    try:
+        conn = http.client.HTTPConnection("ifconfig.me")
+        conn.request("GET", s)
+        res = conn.getresponse().read()
+    finally:
+        conn.close()
+    return res.decode('utf-8')
+
+
+def getall():
     """Возвращает белый внешний IP-адрес ПК, выполняющего эту функцию."""
     # res = ""
     conn = None
     try:
         conn = http.client.HTTPConnection("ifconfig.me")
-        conn.request("GET", "/ip")
+        conn.request("GET", "/all")
         res = conn.getresponse().read()
     finally:
         conn.close()
@@ -37,6 +51,6 @@ if __name__ == "__main__":
     print(f"my white IP: {my_ip}")
     print(f"{my_ip} info:")
     #
-    r = get_ip_info(my_ip)
+    r = get_ip_geoinfo(my_ip)
     for k, v in r.items():
         print(f"{k}:\t{v}")
