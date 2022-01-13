@@ -33,24 +33,12 @@ def get_my_white_ip(all_info: bool = False) -> str:
     return res.decode('utf-8')
 
 
-def getall():
-    """Возвращает белый внешний IP-адрес ПК, выполняющего эту функцию."""
-    # res = ""
-    conn = None
-    try:
-        conn = http.client.HTTPConnection("ifconfig.me")
-        conn.request("GET", "/all")
-        res = conn.getresponse().read()
-    finally:
-        conn.close()
-    return res.decode('utf-8')
-
-
 if __name__ == "__main__":
-    my_ip: str = get_my_white_ip()
+    my_ip: str = get_my_white_ip(True)
     print(f"my white IP: {my_ip}")
     print(f"{my_ip} info:")
     #
+    print(32*"_")
     r = get_ip_geoinfo(my_ip)
     for k, v in r.items():
         print(f"{k}:\t{v}")
